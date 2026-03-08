@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Brickova CRM</title>
+    <meta name="title" content="Brickova – Real Estate CRM" />
+    <meta name="description" content="Brickova CRM helps real estate agents manage leads, properties, and clients efficiently." />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;700;800;900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              montserrat: ['Montserrat', 'sans-serif'],
+              serif: ['Lora', 'serif'],
+            },
+            colors: {
+              beige: {
+                50: '#faf9f6',
+                100: '#f4f2eb',
+                200: '#e9e6df',
+                300: '#dcd8cf',
+              },
+              sand: {
+                50: '#fdfcfb',
+                100: '#f7f3f0',
+              },
+              navy: {
+                DEFAULT: '#0f172a',
+                light: '#1e293b',
+                muted: '#64748b',
+                ultra: '#020617',
+              },
+              gold: {
+                DEFAULT: '#b8926a',
+                light: '#d4b491',
+                dark: '#8b6e51',
+              },
+              success: '#064e3b', 
+              alert: '#dc2626',
+            },
+            boxShadow: {
+              'soft': '0 2px 10px -1px rgba(15, 23, 42, 0.03)',
+              'premium': '0 12px 30px -8px rgba(15, 23, 42, 0.08)',
+              'elevated': '0 20px 50px -12px rgba(15, 23, 42, 0.12)',
+              'mobile': '0 4px 15px -4px rgba(15, 23, 42, 0.06)',
+              'glass': '0 8px 32px 0 rgba(15, 23, 42, 0.08)',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      :root {
+        scroll-padding-top: 64px;
+      }
+      body { 
+        font-family: 'Inter', sans-serif; 
+        background-color: #faf9f6;
+        color: #0f172a;
+        scroll-behavior: smooth;
+        -webkit-tap-highlight-color: transparent;
+        line-height: 1.5;
+        overflow-x: hidden;
+      }
+      .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+      .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+      .custom-scrollbar::-webkit-scrollbar-thumb { background: #e9e6df; border-radius: 10px; }
+      
+      .glass-nav {
+        background: rgba(250, 249, 246, 0.9);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+      }
+
+      .btn-glass {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .hero-texture {
+        background-image: radial-gradient(#0f172a 0.5px, transparent 0.5px);
+        background-size: 32px 32px;
+        opacity: 0.02;
+      }
+
+      .institutional-border {
+        border: 1px solid #e2e8f0;
+      }
+
+      /* Global Range Slider Styling - Optimized for Mobile Thumbs */
+      input[type=range] {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #e9e6df;
+        height: 8px;
+        border-radius: 9999px;
+        outline: none;
+      }
+
+      input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        background: #0f172a;
+        cursor: pointer;
+        border: 4px solid #ffffff;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+        transition: all 0.2s ease;
+      }
+
+      @media (max-width: 640px) {
+        input[type=range]::-webkit-slider-thumb {
+          height: 28px;
+          width: 28px;
+        }
+      }
+
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      /* Touch-friendly transitions */
+      .active-scale-98:active {
+        transform: scale(0.98);
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.4",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
