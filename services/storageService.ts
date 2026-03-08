@@ -1,58 +1,39 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../firebase";
 
-/*
------------------------------------------
-UPLOAD IMAGE
------------------------------------------
-*/
+/* Upload single image */
 
 export const uploadImage = async (file: any, path: string): Promise<string> => {
   try {
-    if (!file) {
-      throw new Error("No file selected");
-    }
+    if (!file) throw new Error("No file selected");
 
     const fileName = `${Date.now()}-${file.name}`;
     const fullPath = `${path}/${fileName}`;
 
     const storageRef = ref(storage, fullPath);
 
-    // Upload file
     await uploadBytes(storageRef, file);
 
-    // Get public URL
-    const url = await getDownloadURL(storageRef);
+    const downloadURL = await getDownloadURL(storageRef);
 
-    return url;
+    return downloadURL;
   } catch (error) {
-    console.error("Error uploading image:", error);
+    console.error("Upload error:", error);
     throw error;
   }
 };
 
-/*
------------------------------------------
-UPLOAD MULTIPLE IMAGES
------------------------------------------
-*/
+/* Upload multiple images */
 
 export const uploadMultipleImages = async (
   files: any[],
   path: string
 ): Promise<string[]> => {
   try {
-    if (!files || files.length === 0) {
-      return [];
-    }
-
     const uploads = files.map((file) => uploadImage(file, path));
-
-    const urls = await Promise.all(uploads);
-
-    return urls;
+    return await Promise.all(uploads);
   } catch (error) {
-    console.error("Error uploading multiple images:", error);
+    console.error("Multiple upload error:", error);
     throw error;
   }
 };
