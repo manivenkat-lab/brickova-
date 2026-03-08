@@ -14,27 +14,42 @@
   --color-success: #10b981;
 }
 
+/* Base styles */
+
 @layer base {
   body {
     @apply bg-beige-50 text-navy antialiased overflow-x-hidden;
-    background-image: radial-gradient(circle at 2px 2px, rgba(15, 23, 42, 0.02) 1px, transparent 0);
+
+    background-image: radial-gradient(
+      circle at 2px 2px,
+      rgba(15, 23, 42, 0.02) 1px,
+      transparent 0
+    );
+
     background-size: 40px 40px;
+  }
+
+  section {
+    @apply py-24;
   }
 }
 
+/* Components */
+
 @layer components {
+
   .glass-nav {
     @apply bg-white/80 backdrop-blur-xl border-b border-beige-200 shadow-sm;
   }
-  
+
   .shadow-premium {
     @apply shadow-[0_10px_40px_-15px_rgba(15,23,42,0.1)];
   }
-  
+
   .shadow-elevated {
     @apply shadow-[0_20px_50px_-12px_rgba(15,23,42,0.15)];
   }
-  
+
   .shadow-navy {
     @apply shadow-[0_10px_30px_-10px_rgba(15,23,42,0.3)];
   }
@@ -50,11 +65,11 @@
   .custom-scrollbar::-webkit-scrollbar {
     @apply w-1.5;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-track {
     @apply bg-transparent;
   }
-  
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     @apply bg-beige-200 rounded-full hover:bg-beige-300 transition-colors;
   }
@@ -62,43 +77,63 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
   .hero-texture {
-    background-image: 
+    background-image:
       linear-gradient(to right, rgba(15, 23, 42, 0.06) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(15, 23, 42, 0.06) 1px, transparent 1px);
+
     background-size: 80px 80px;
+  }
+
+  /* Hero section fix */
+  .hero-section {
+    @apply relative pb-36;
+  }
+
+  /* Featured properties section */
+  .featured-properties {
+    @apply mt-24;
+  }
+
+  /* Property card grid fix */
+  .property-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12;
   }
 }
 
-/* Mobile Responsiveness Polish */
+/* Mobile Responsiveness */
+
 @media (max-width: 768px) {
+
   .dashboard-card {
     @apply !w-full !p-4;
   }
-  
+
   .property-grid {
     @apply !grid-cols-1;
   }
-  
+
   .form-input {
-    @apply !text-base !py-4; /* Larger touch target */
+    @apply !text-base !py-4;
   }
-  
+
   .mobile-sidebar-open {
     @apply !translate-x-0;
   }
-  
+
   .mobile-sidebar-closed {
     @apply !-translate-x-full;
   }
 }
 
-/* Slide-in animation for sidebar */
+/* Sidebar animation */
+
 .sidebar-transition {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
