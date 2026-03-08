@@ -1,8 +1,0 @@
-{
-  "name": "Brickova",
-  "description": "Brickova CRM helps real estate agents manage leads, properties, and clients efficiently.",
-  "requestFramePermissions": [
-    "geolocation",
-    "microphone"
-  ]
-}
