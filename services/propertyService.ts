@@ -11,22 +11,15 @@ import {
   deleteDoc,
   onSnapshot
 } from "firebase/firestore";
-
 import { db } from "../firebase";
 import { Property, SearchFilters } from "../types";
 
 const COLLECTION_NAME = "properties";
 
-/* --------------------------------------------------- */
-/* SUBSCRIBE TO PROPERTIES (Realtime updates) */
-/* --------------------------------------------------- */
-
 export const subscribeToProperties = (
   filters: { ownerId?: string; agencyId?: string },
   callback: (properties: Property[]) => void
 ) => {
-  if (!db) return () => {};
-
   try {
     let q;
 
@@ -47,19 +40,14 @@ export const subscribeToProperties = (
     return onSnapshot(q, (snapshot) => {
       const properties = snapshot.docs.map((d) => ({
         id: d.id,
-        ...d.data(),
+        ...d.data()
       })) as Property[];
 
-      // Safe sorting
       properties.sort((a: any, b: any) => {
         const timeA =
-          a?.createdAt?.toMillis?.() ??
-          new Date(a?.createdAt ?? 0).getTime();
-
+          a?.createdAt?.toMillis?.() ?? new Date(a?.createdAt ?? 0).getTime();
         const timeB =
-          b?.createdAt?.toMillis?.() ??
-          new Date(b?.createdAt ?? 0).getTime();
-
+          b?.createdAt?.toMillis?.() ?? new Date(b?.createdAt ?? 0).getTime();
         return timeB - timeA;
       });
 
@@ -71,67 +59,53 @@ export const subscribeToProperties = (
   }
 };
 
-/* --------------------------------------------------- */
-/* CREATE PROPERTY */
-/* --------------------------------------------------- */
-
 export const createProperty = async (
   propertyData: any,
   userId: string,
   agencyId: string | null
 ): Promise<string> => {
-  if (!db) throw new Error("Firestore not initialized");
+  const docRef = await addDoc(collection(db, COLLECTION_NAME), {
+    ...propertyData,
+    createdBy: userId,
+    agencyId: agencyId || null,
+    createdAt: serverTimestamp(),
+    postedAt: new Date().toISOString(),
+    lastConfirmedAt: new Date().toISOString(),
+    status: "active"
+  });
 
-  try {
-    const docRef = await addDoc(collection(db, COLLECTION_NAME), {
-      ...propertyData,
-      createdBy: userId,
-      agencyId: agencyId || null,
-      createdAt: serverTimestamp(),
-      postedAt: new Date().toISOString(),
-      lastConfirmedAt: new Date().toISOString(),
-      status: "active",
-    });
-
-    return docRef.id;
-  } catch (error) {
-    console.error("Error creating property:", error);
-    throw error;
-  }
+  return docRef.id;
 };
-
-/* --------------------------------------------------- */
-/* GET ALL PROPERTIES */
-/* --------------------------------------------------- */
 
 export const getProperties = async (
   filters?: SearchFilters
 ): Promise<Property[]> => {
-  if (!db) return [];
-
   try {
     let q = query(collection(db, COLLECTION_NAME));
 
     if (filters) {
       const constraints: any[] = [];
 
-      if (filters.category !== "ALL") {
+      if (filters.category && filters.category !== "ALL") {
         constraints.push(where("category", "==", filters.category));
       }
 
-      if (filters.type !== "ALL") {
+      if (filters.type && filters.type !== "ALL") {
         constraints.push(where("type", "==", filters.type));
       }
 
-      if (filters.bhk !== "ALL") {
+      if (filters.bhk && filters.bhk !== "ALL") {
         constraints.push(where("bhk", "==", filters.bhk));
       }
 
-      if (filters.minPrice > 0) {
+      if (typeof filters.minPrice === "number" && filters.minPrice > 0) {
         constraints.push(where("price", ">=", filters.minPrice));
       }
 
-      if (filters.maxPrice < 2000000000) {
+      if (
+        typeof filters.maxPrice === "number" &&
+        filters.maxPrice < 2000000000
+      ) {
         constraints.push(where("price", "<=", filters.maxPrice));
       }
 
@@ -140,11 +114,11 @@ export const getProperties = async (
       }
     }
 
-    const querySnapshot = await getDocs(q);
+    const snapshot = await getDocs(q);
 
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data()
     })) as Property[];
   } catch (error) {
     console.error("Error getting properties:", error);
@@ -152,53 +126,35 @@ export const getProperties = async (
   }
 };
 
-/* --------------------------------------------------- */
-/* GET PROPERTY BY ID */
-/* --------------------------------------------------- */
-
-export const getPropertyById = async (
-  id: string
-): Promise<Property | null> => {
-  if (!db) return null;
-
+export const getPropertyById = async (id: string): Promise<Property | null> => {
   try {
-    const docRef = doc(db, COLLECTION_NAME, id);
-    const docSnap = await getDoc(docRef);
+    const ref = doc(db, COLLECTION_NAME, id);
+    const snap = await getDoc(ref);
 
-    if (docSnap.exists()) {
-      return {
-        id: docSnap.id,
-        ...docSnap.data(),
-      } as Property;
-    }
+    if (!snap.exists()) return null;
 
-    return null;
+    return {
+      id: snap.id,
+      ...snap.data()
+    } as Property;
   } catch (error) {
     console.error("Error getting property by id:", error);
     return null;
   }
 };
 
-/* --------------------------------------------------- */
-/* GET MY PROPERTIES */
-/* --------------------------------------------------- */
-
-export const getMyProperties = async (
-  userId: string
-): Promise<Property[]> => {
-  if (!db) return [];
-
+export const getMyProperties = async (userId: string): Promise<Property[]> => {
   try {
     const q = query(
       collection(db, COLLECTION_NAME),
       where("createdBy", "==", userId)
     );
 
-    const querySnapshot = await getDocs(q);
+    const snapshot = await getDocs(q);
 
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map((d) => ({
+      id: d.id,
+      ...d.data()
     })) as Property[];
   } catch (error) {
     console.error("Error getting my properties:", error);
@@ -206,41 +162,19 @@ export const getMyProperties = async (
   }
 };
 
-/* --------------------------------------------------- */
-/* UPDATE PROPERTY */
-/* --------------------------------------------------- */
-
 export const updateProperty = async (
   id: string,
   data: Partial<Property>
 ): Promise<void> => {
-  if (!db) throw new Error("Firestore not initialized");
+  const ref = doc(db, COLLECTION_NAME, id);
 
-  try {
-    const docRef = doc(db, COLLECTION_NAME, id);
-
-    await updateDoc(docRef, {
-      ...data,
-      lastConfirmedAt: new Date().toISOString(),
-    });
-  } catch (error) {
-    console.error("Error updating property:", error);
-    throw error;
-  }
+  await updateDoc(ref, {
+    ...data,
+    lastConfirmedAt: new Date().toISOString()
+  });
 };
 
-/* --------------------------------------------------- */
-/* DELETE PROPERTY */
-/* --------------------------------------------------- */
-
 export const deleteProperty = async (id: string): Promise<void> => {
-  if (!db) throw new Error("Firestore not initialized");
-
-  try {
-    const docRef = doc(db, COLLECTION_NAME, id);
-    await deleteDoc(docRef);
-  } catch (error) {
-    console.error("Error deleting property:", error);
-    throw error;
-  }
+  const ref = doc(db, COLLECTION_NAME, id);
+  await deleteDoc(ref);
 };
