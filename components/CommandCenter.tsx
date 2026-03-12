@@ -23,6 +23,8 @@ interface CommandCenterProps {
   onUpdateLead: (l: Lead) => void;
   onVerifyProperty?: (id: string) => void;
   onLogout: () => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
 }
 
 const CommandCenter: React.FC<CommandCenterProps> = ({ 
@@ -34,7 +36,9 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
   agentProfile,
   agency,
   allAgents,
-  onLogout
+  onLogout,
+  isSidebarOpen,
+  setIsSidebarOpen
 }) => {
   const [isAddingProperty, setIsAddingProperty] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'listings' | 'leads' | 'team'>('dashboard');
@@ -42,7 +46,6 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
   const [isAddingLead, setIsAddingLead] = useState<Partial<Lead> | null>(null);
   const [isSubmittingLead, setIsSubmittingLead] = useState(false);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const [leads, setLeads] = useState<Lead[]>([]);
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -224,41 +227,33 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)] bg-beige-50 relative">
-      {/* Mobile Hamburger */}
-      <button 
-        onClick={() => setIsSidebarOpen(true)}
-        className="lg:hidden fixed bottom-6 right-6 z-[100] w-14 h-14 bg-navy text-white rounded-full shadow-navy flex items-center justify-center text-xl active:scale-90 transition-all"
-      >
-        <i className="fa-solid fa-bars-staggered"></i>
-      </button>
-
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-80px)] bg-beige-50 relative">
       {/* Sidebar Overlay */}
       {isSidebarOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-navy/60 backdrop-blur-sm z-[110]"
+          className="md:hidden fixed inset-0 bg-navy/60 backdrop-blur-sm z-[110]"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
 
       <aside className={`
-        fixed lg:static inset-y-0 left-0 z-[120] w-80 bg-navy flex flex-col p-4 md:p-10 lg:space-y-10 shrink-0 shadow-premium border-r border-white/5 
+        fixed md:static inset-y-0 left-0 z-[120] w-[260px] bg-navy flex flex-col p-4 md:p-10 lg:space-y-10 shrink-0 shadow-premium border-r border-white/5 
         sidebar-transition
-        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="flex items-center justify-between mb-8 lg:hidden">
+        <div className="flex items-center justify-between mb-8 md:hidden">
           <span className="text-white font-black uppercase tracking-widest text-xs">Menu</span>
           <button onClick={() => setIsSidebarOpen(false)} className="text-white/40 hover:text-white p-2">
             <i className="fa-solid fa-xmark text-xl"></i>
           </button>
         </div>
 
-        <div className="flex lg:flex-col items-center justify-between gap-3 md:gap-6">
-          <div className="flex lg:flex-col items-center gap-3 md:gap-6 text-center">
+        <div className="flex md:flex-col items-center justify-between gap-3 md:gap-6">
+          <div className="flex md:flex-col items-center gap-3 md:gap-6 text-center">
              <div className="w-10 h-10 md:w-24 md:h-24 rounded-xl p-0.5 md:p-1 border-2 border-gold/40 shadow-soft overflow-hidden bg-white/5 group">
                 <img src={agentProfile.photo} alt={agentProfile.name} className="w-full h-full object-cover rounded-lg md:rounded-xl group-hover:scale-105 transition-transform duration-500" />
              </div>
-             <div className="text-left lg:text-center">
+             <div className="text-left md:text-center">
                 <h3 className="text-[11px] md:text-lg font-black text-white leading-tight uppercase tracking-tight">{agentProfile.name}</h3>
                 <span className="text-[7px] md:text-[8px] font-black uppercase tracking-widest mt-1 text-gold px-2.5 py-1 bg-white/5 rounded-full inline-block border border-gold/20">
                    {agentProfile.tier}
@@ -270,7 +265,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
           </button>
         </div>
 
-        <nav className="flex flex-col gap-1.5 mt-5 lg:mt-0">
+        <nav className="flex flex-col gap-1.5 mt-5 md:mt-0">
           <button 
             onClick={() => { setActiveTab('dashboard'); setIsSidebarOpen(false); }} 
             className={`whitespace-nowrap flex items-center gap-3 px-5 py-3 rounded-xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === 'dashboard' ? 'bg-white text-navy shadow-premium' : 'text-white/40 hover:text-white/70 hover:bg-white/5'}`}
@@ -299,7 +294,7 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
           )}
         </nav>
 
-        <div className="hidden lg:flex flex-col gap-2 mt-auto">
+        <div className="hidden md:flex flex-col gap-2 mt-auto">
           <button onClick={onBackToMarket} className="w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] text-white/40 hover:text-white transition-all flex items-center gap-4 group">
             <i className="fa-solid fa-globe group-hover:scale-110 transition-transform text-gold/60"></i> Return to Portal
           </button>
@@ -311,21 +306,26 @@ const CommandCenter: React.FC<CommandCenterProps> = ({
 
       <main className="flex-1 p-5 md:p-12 space-y-6 md:space-y-10 overflow-y-auto custom-scrollbar">
         <header className="flex flex-col md:flex-row md:justify-between md:items-end gap-5 md:gap-6 border-b border-beige-200 pb-5 md:pb-8">
-           <div className="space-y-1.5 md:space-y-2">
-             <h2 className="text-2xl md:text-5xl font-[900] text-navy uppercase tracking-tighter">
-               {activeTab === 'dashboard' ? 'Brickova Dashboard' : activeTab === 'leads' ? 'Lead Pipeline' : activeTab === 'listings' ? 'Listings' : 'Agency Team'}
-             </h2>
-             <p className="text-[8px] md:text-[10px] font-black text-navy-muted uppercase tracking-[0.3em] md:tracking-[0.4em] flex items-center gap-2">
-               <i className="fa-solid fa-building-shield text-gold"></i> {agency?.name || 'Independent Partner'}
-               {agency?.code && (
-                 <>
-                   <span className="mx-2 opacity-20">|</span>
-                   <span className="text-gold">Join Code: <span className="bg-navy text-white px-2 py-0.5 rounded ml-1 select-all">{agency.code}</span></span>
-                 </>
-               )}
-               <span className="mx-2 opacity-20">|</span>
-               <span className="text-gold">Slot Use: {agency?.slotUsed || 0}/{agency?.slotLimit || 15}</span>
-             </p>
+           <div className="flex items-center gap-4">
+             <button onClick={() => setIsSidebarOpen(true)} className="md:hidden text-navy hover:text-gold transition-colors">
+               <i className="fa-solid fa-bars-staggered text-xl"></i>
+             </button>
+             <div className="space-y-1.5 md:space-y-2">
+               <h2 className="text-2xl md:text-5xl font-[900] text-navy uppercase tracking-tighter">
+                 {activeTab === 'dashboard' ? 'Brickova Dashboard' : activeTab === 'leads' ? 'Lead Pipeline' : activeTab === 'listings' ? 'Listings' : 'Agency Team'}
+               </h2>
+               <p className="text-[8px] md:text-[10px] font-black text-navy-muted uppercase tracking-[0.3em] md:tracking-[0.4em] flex items-center gap-2">
+                 <i className="fa-solid fa-building-shield text-gold"></i> {agency?.name || 'Independent Partner'}
+                 {agency?.code && (
+                   <>
+                     <span className="mx-2 opacity-20">|</span>
+                     <span className="text-gold">Join Code: <span className="bg-navy text-white px-2 py-0.5 rounded ml-1 select-all">{agency.code}</span></span>
+                   </>
+                 )}
+                 <span className="mx-2 opacity-20">|</span>
+                 <span className="text-gold">Slot Use: {agency?.slotUsed || 0}/{agency?.slotLimit || 15}</span>
+               </p>
+             </div>
            </div>
             <div className="flex gap-2 md:gap-4">
               {(activeTab === 'leads' || activeTab === 'dashboard') && (
