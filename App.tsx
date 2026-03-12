@@ -418,6 +418,7 @@ const App: React.FC = () => {
   const [agentUser, setAgentUser] = useState<Agent | null>(null);
   const [currentAgency, setCurrentAgency] = useState<Agency | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     const fetchAgency = async () => {
@@ -958,6 +959,8 @@ const App: React.FC = () => {
                 allLeads={[]} 
                 onUpdateLead={() => {}} 
                 onLogout={handleAgentLogout} 
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
               />
             )}
           </div>
